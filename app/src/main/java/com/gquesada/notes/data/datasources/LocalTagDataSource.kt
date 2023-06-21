@@ -24,4 +24,9 @@ object LocalTagDataSource {
     fun removeTag(id: Int) {
         tags.removeIf { tag -> tag.id == id }
     }
+
+    fun editTag(tag: LocalTag){
+        val index = tags.indexOfFirst { item -> item.id == tag.id }
+        tags[index] = tag
+    }
 }

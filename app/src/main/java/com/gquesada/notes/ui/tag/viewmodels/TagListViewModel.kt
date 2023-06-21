@@ -8,13 +8,17 @@ import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.map
 import com.gquesada.notes.R
 import com.gquesada.notes.domain.models.TagModel
+import com.gquesada.notes.domain.usecases.AddTagUseCase
 import com.gquesada.notes.domain.usecases.DeleteTagUseCase
+import com.gquesada.notes.domain.usecases.EditTagUseCase
 import com.gquesada.notes.domain.usecases.GetTagListUseCase
 import com.gquesada.notes.ui.tag.models.UITag
 
 class TagListViewModel(
     private val getTagListUseCase: GetTagListUseCase,
-    private val deleteTagUseCase: DeleteTagUseCase
+    private val deleteTagUseCase: DeleteTagUseCase,
+    private val addTagUseCase: AddTagUseCase,
+    private val editTagUseCase: EditTagUseCase
 ) : ViewModel() {
 
     private val _tagListLiveData = MutableLiveData<List<UITag>>()
@@ -94,6 +98,7 @@ class TagListViewModel(
         val list = uiTag?.let { tag ->
             _tagListLiveData.value?.map { item ->
                 if (item.id == tag.id) {
+                    editTagUseCase.execute(TagModel(uiTag.id, tagName))
                     tag.copy(name = tagName)
                 } else {
                     item
@@ -102,6 +107,7 @@ class TagListViewModel(
         } ?: run {
             val newList = _tagListLiveData.value?.toMutableList()
             newList?.add(UITag(id = 0, name = tagName, isChecked = false))
+            addTagUseCase.execute(TagModel(id = 567, tagName))
             newList?.toList() ?: emptyList()
         }
         _tagListLiveData.value = list

@@ -21,4 +21,8 @@ class TagRepositoryImpl(
     override fun removeTag(id: Int) {
         tagDataSource.removeTag(id)
     }
+
+    override fun editTag(tag: TagModel) {
+        tagDataSource.editTag(tag.fromModel())
+    }
 }

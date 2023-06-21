@@ -7,4 +7,6 @@ interface TagRepository {
     fun getTags(): List<TagModel>
     fun addTag(tag: TagModel)
     fun removeTag(id: Int)
+
+    fun editTag(tag: TagModel)
 }

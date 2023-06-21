@@ -21,7 +21,9 @@ import com.gquesada.notes.R
 import com.gquesada.notes.data.datasources.LocalTagDataSource
 import com.gquesada.notes.data.repositories.TagRepositoryImpl
 import com.gquesada.notes.domain.models.TagModel
+import com.gquesada.notes.domain.usecases.AddTagUseCase
 import com.gquesada.notes.domain.usecases.DeleteTagUseCase
+import com.gquesada.notes.domain.usecases.EditTagUseCase
 import com.gquesada.notes.domain.usecases.GetTagListUseCase
 import com.gquesada.notes.ui.tag.adapters.TagListAdapter
 import com.gquesada.notes.ui.tag.models.UITag
@@ -43,10 +45,14 @@ class TagListFragment : Fragment() {
     private val repository by lazy { TagRepositoryImpl(LocalTagDataSource) }
     private val getTagListUseCase by lazy { GetTagListUseCase(repository) }
     private val deleteTagUseCase by lazy { DeleteTagUseCase(repository) }
+    private val addTagUseCase by lazy { AddTagUseCase(repository) }
+    private val editTagUseCase by lazy { EditTagUseCase(repository) }
     private val viewModelFactory by lazy {
         TagListViewModelFactory(
             getTagListUseCase,
-            deleteTagUseCase
+            deleteTagUseCase,
+            addTagUseCase,
+            editTagUseCase
         )
     }
 
