@@ -5,8 +5,15 @@ import com.gquesada.notes.domain.models.TagModel
 
 object TagMapper {
 
-    fun LocalTag.toTag(): TagModel = TagModel(
-        id = this.id,
-        title = this.title
-    )
+    fun TagModel.fromModel(): LocalTag =
+        LocalTag(
+            id = id,
+            title = title
+        )
+
+    fun LocalTag.toModel(): TagModel =
+        TagModel(
+            id = id,
+            title = title
+        )
 }
