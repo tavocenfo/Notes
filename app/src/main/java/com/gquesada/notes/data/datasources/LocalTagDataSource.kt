@@ -21,7 +21,7 @@ object LocalTagDataSource {
         tags.add(tag)
     }
 
-    fun removeTag(id: Int) {
+    fun removeTag(id: Long) {
         tags.removeIf { tag -> tag.id == id }
     }
 

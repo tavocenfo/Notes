@@ -1,14 +1,15 @@
 package com.gquesada.notes.domain.repositories
 
 import com.gquesada.notes.domain.models.NoteModel
+import kotlinx.coroutines.flow.Flow
 
 interface NoteRepository {
 
-    fun getAllNotes(): List<NoteModel>
+    fun getAllNotes(): Flow<List<NoteModel>>
 
-    fun addNote(note: NoteModel)
+    suspend fun addNote(note: NoteModel): Long
 
-    fun updateNote(note: NoteModel)
+    suspend fun updateNote(note: NoteModel)
 
-    fun deleteNote(id: Int)
+    suspend fun deleteNote(note: NoteModel)
 }

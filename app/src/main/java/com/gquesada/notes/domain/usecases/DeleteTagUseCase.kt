@@ -7,7 +7,7 @@ class DeleteTagUseCase(
     private val repository: TagRepository
 ) {
 
-    fun execute(id: Int) {
+    fun execute(id: Long) {
         repository.removeTag(id)
     }
 }

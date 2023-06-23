@@ -7,7 +7,7 @@ class AddNoteUseCase(
     private val repository: NoteRepository
 ) {
 
-    fun execute(noteModel: NoteModel) {
+    suspend fun execute(noteModel: NoteModel) {
         repository.addNote(noteModel)
     }
 }

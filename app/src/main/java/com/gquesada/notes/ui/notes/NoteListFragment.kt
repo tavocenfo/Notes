@@ -13,11 +13,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.gquesada.notes.R
+import com.gquesada.notes.data.database.database.AppDatabase
+import com.gquesada.notes.data.datasources.DatabaseNoteDataSource
 import com.gquesada.notes.data.datasources.LocalNoteDataSource
 import com.gquesada.notes.data.repositories.NoteRepositoryImpl
 import com.gquesada.notes.domain.models.NoteModel
 import com.gquesada.notes.domain.usecases.DeleteNoteUseCase
 import com.gquesada.notes.domain.usecases.GetNotesUseCase
+import com.gquesada.notes.ui.addnotes.views.AddNoteFragment
 import com.gquesada.notes.ui.main.viewmodels.MainViewModel
 import com.gquesada.notes.ui.main.viewmodels.NavigationScreen
 import com.gquesada.notes.ui.notes.adapters.NoteListAdapter
@@ -27,7 +30,11 @@ import com.gquesada.notes.ui.notes.viewmodels.factories.NoteListViewModelFactory
 
 class NoteListFragment : Fragment() {
 
-    private val repository by lazy { NoteRepositoryImpl(noteDataSource = LocalNoteDataSource) }
+    private val tagDao by lazy { AppDatabase.getInstance(requireContext()).getTagDao() }
+    private val noteDao by lazy { AppDatabase.getInstance(requireContext()).getNotesDao() }
+    private val noteDataSource by lazy { DatabaseNoteDataSource(tagDao, noteDao) }
+
+    private val repository by lazy { NoteRepositoryImpl(noteDataSource = noteDataSource) }
 
     private val getNoteListUseCase by lazy { GetNotesUseCase(repository) }
     private val deleteNoteUseCase by lazy { DeleteNoteUseCase(repository) }

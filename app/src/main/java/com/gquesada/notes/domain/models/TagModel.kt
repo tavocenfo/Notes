@@ -5,6 +5,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class TagModel(
-    val id: Int,
+    val id: Long,
     val title: String
 ) : Parcelable

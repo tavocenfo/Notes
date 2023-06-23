@@ -12,6 +12,8 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.gquesada.notes.R
+import com.gquesada.notes.data.database.database.AppDatabase
+import com.gquesada.notes.data.datasources.DatabaseNoteDataSource
 import com.gquesada.notes.data.datasources.LocalNoteDataSource
 import com.gquesada.notes.data.repositories.NoteRepositoryImpl
 import com.gquesada.notes.domain.models.TagModel
@@ -32,8 +34,12 @@ class AddNoteFragment : Fragment() {
     private lateinit var fabAddNote: FloatingActionButton
     private lateinit var mainViewModel: MainViewModel
     private lateinit var viewModel: AddNoteViewModel
+
+    private val tagDao by lazy { AppDatabase.getInstance(requireContext()).getTagDao() }
+    private val noteDao by lazy { AppDatabase.getInstance(requireContext()).getNotesDao() }
+    private val noteDataSource by lazy { DatabaseNoteDataSource(tagDao, noteDao) }
     private val viewModelFactory: AddNoteViewModelFactory by lazy {
-        AddNoteViewModelFactory(AddNoteUseCase(NoteRepositoryImpl(LocalNoteDataSource)))
+        AddNoteViewModelFactory(AddNoteUseCase(NoteRepositoryImpl(noteDataSource)))
     }
 
 

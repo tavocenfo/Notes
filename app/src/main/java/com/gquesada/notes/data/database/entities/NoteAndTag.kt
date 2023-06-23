@@ -9,5 +9,5 @@ data class NoteAndTag(
         parentColumn = "id",
         entityColumn = "tagId"
     )
-    val note: List<NoteEntity>
+    val notes: List<NoteEntity>
 )

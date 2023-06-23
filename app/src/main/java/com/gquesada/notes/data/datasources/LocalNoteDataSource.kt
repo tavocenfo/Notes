@@ -54,7 +54,7 @@ object LocalNoteDataSource {
         notes.add(localNote)
     }
 
-    fun deleteNote(id: Int) {
+    fun deleteNote(id: Long) {
         notes.removeIf { note -> note.id == id }
     }
 
