@@ -12,6 +12,7 @@
 
     <string name="notes_list_screen_title">Notes</string>
     <string name="add_note_screen_title">Add a note</string>
+    <string name="edit_note_screen_title">Edit a note</string>
     <string name="tag_list_screen_title">Tags</string>
 
     <string name="add_note_title_hint_text">Title</string>

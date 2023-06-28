@@ -23,4 +23,9 @@ object TagMapper {
         id = id,
         title = name
     )
+
+    fun TagModel.toEntity():TagEntity = TagEntity(
+        id = id,
+        name = title
+    )
 }

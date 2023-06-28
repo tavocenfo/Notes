@@ -18,7 +18,8 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.gquesada.notes.R
-import com.gquesada.notes.data.datasources.LocalTagDataSource
+import com.gquesada.notes.data.database.database.AppDatabase
+import com.gquesada.notes.data.datasources.DatabaseTagDataSource
 import com.gquesada.notes.data.repositories.TagRepositoryImpl
 import com.gquesada.notes.domain.models.TagModel
 import com.gquesada.notes.domain.usecases.AddTagUseCase
@@ -42,7 +43,9 @@ class TagListFragment : Fragment() {
     }
 
     private val adapter by lazy { TagListAdapter(::onTagSelected) }
-    private val repository by lazy { TagRepositoryImpl(LocalTagDataSource) }
+    private val tagDao by lazy { AppDatabase.getInstance(requireContext()).getTagDao() }
+    private val tagDataSource by lazy { DatabaseTagDataSource(tagDao) }
+    private val repository by lazy { TagRepositoryImpl(tagDataSource) }
     private val getTagListUseCase by lazy { GetTagListUseCase(repository) }
     private val deleteTagUseCase by lazy { DeleteTagUseCase(repository) }
     private val addTagUseCase by lazy { AddTagUseCase(repository) }

@@ -28,9 +28,9 @@ class MainActivity : AppCompatActivity() {
     private fun observe() {
         viewModel.navigationEvent.observe(this) { event ->
             when (event) {
-                NavigationScreen.AddNotes -> navigateToFragment(AddNoteFragment())
-                NavigationScreen.TagList -> navigateToFragment(TagListFragment())
-                else -> Unit
+                is NavigationScreen.AddNotes -> navigateToFragment(AddNoteFragment.newInstance(null))
+                is NavigationScreen.TagList -> navigateToFragment(TagListFragment())
+                is NavigationScreen.EditNote -> navigateToFragment(AddNoteFragment.newInstance(event.noteModel))
             }
         }
     }

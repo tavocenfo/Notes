@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.map
+import androidx.lifecycle.viewModelScope
 import com.gquesada.notes.R
 import com.gquesada.notes.domain.models.TagModel
 import com.gquesada.notes.domain.usecases.AddTagUseCase
@@ -13,6 +14,11 @@ import com.gquesada.notes.domain.usecases.DeleteTagUseCase
 import com.gquesada.notes.domain.usecases.EditTagUseCase
 import com.gquesada.notes.domain.usecases.GetTagListUseCase
 import com.gquesada.notes.ui.tag.models.UITag
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class TagListViewModel(
     private val getTagListUseCase: GetTagListUseCase,
@@ -45,14 +51,23 @@ class TagListViewModel(
     }
 
     private fun getTags() {
-        _tagListLiveData.value = getTagListUseCase.execute()
-            .map { item ->
-                UITag(
-                    id = item.id,
-                    name = item.title,
-                    isChecked = false
-                )
-            }
+        viewModelScope.launch {
+            getTagListUseCase.execute()
+                .map { items ->
+                    items.map { item ->
+                        UITag(
+                            id = item.id,
+                            name = item.title,
+                            isChecked = false
+                        )
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .collect { tags ->
+                    _tagListLiveData.value = tags
+                }
+
+        }
     }
 
     fun onTagSelected(uiTag: UITag) {
@@ -89,28 +104,26 @@ class TagListViewModel(
     }
 
     fun onRemoveItem(uiTag: UITag) {
-        deleteTagUseCase.execute(uiTag.id)
-        val list = _tagListLiveData.value?.filter { it.id != uiTag.id } ?: return
-        _tagListLiveData.value = list
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                deleteTagUseCase.execute(TagModel(id = uiTag.id, title = uiTag.name))
+            }
+        }
+
     }
 
     fun editTag(tagName: String, uiTag: UITag?) {
-        val list = uiTag?.let { tag ->
-            _tagListLiveData.value?.map { item ->
-                if (item.id == tag.id) {
+        viewModelScope.launch {
+            if (uiTag != null) {
+                withContext(Dispatchers.IO) {
                     editTagUseCase.execute(TagModel(uiTag.id, tagName))
-                    tag.copy(name = tagName)
-                } else {
-                    item
+                }
+            } else {
+                withContext(Dispatchers.IO) {
+                    addTagUseCase.execute(TagModel(id = 0, tagName))
                 }
             }
-        } ?: run {
-            val newList = _tagListLiveData.value?.toMutableList()
-            newList?.add(UITag(id = 0, name = tagName, isChecked = false))
-            addTagUseCase.execute(TagModel(id = 567, tagName))
-            newList?.toList() ?: emptyList()
         }
-        _tagListLiveData.value = list
     }
 
     fun onSaveTag() {

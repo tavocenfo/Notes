@@ -3,6 +3,7 @@ package com.gquesada.notes.ui.main.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.gquesada.notes.domain.models.NoteModel
 
 class MainViewModel : ViewModel() {
 
@@ -15,7 +16,9 @@ class MainViewModel : ViewModel() {
     }
 }
 
-enum class NavigationScreen {
-    AddNotes,
-    TagList
+sealed class NavigationScreen {
+    object AddNotes : NavigationScreen()
+    object TagList : NavigationScreen()
+
+    class EditNote(val noteModel: NoteModel) : NavigationScreen()
 }

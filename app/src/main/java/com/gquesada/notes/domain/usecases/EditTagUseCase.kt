@@ -7,7 +7,7 @@ class EditTagUseCase(
     private val tagRepository: TagRepository
 ) {
 
-    fun execute(tagModel: TagModel) {
+    suspend fun execute(tagModel: TagModel) {
         tagRepository.editTag(tagModel)
     }
 }

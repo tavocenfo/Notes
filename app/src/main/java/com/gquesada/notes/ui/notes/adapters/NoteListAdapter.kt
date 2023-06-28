@@ -9,7 +9,8 @@ import com.gquesada.notes.R
 import com.gquesada.notes.domain.models.NoteModel
 
 class NoteListAdapter(
-    private val onItemLongClicked: (noteModel: NoteModel) -> Unit
+    private val onItemLongClicked: (noteModel: NoteModel) -> Unit,
+    private val onItemClicked: (noteModel: NoteModel) -> Unit,
 ) : RecyclerView.Adapter<NoteItemViewHolder>() {
 
     private val data = mutableListOf<NoteModel>()
@@ -29,7 +30,7 @@ class NoteListAdapter(
     override fun getItemCount(): Int = data.size
 
     override fun onBindViewHolder(holder: NoteItemViewHolder, position: Int) {
-        holder.bind(data[position], onItemLongClicked)
+        holder.bind(data[position], onItemLongClicked, onItemClicked)
     }
 
 
@@ -37,7 +38,11 @@ class NoteListAdapter(
 
 class NoteItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-    fun bind(noteModel: NoteModel, onItemLongClicked: (noteModel: NoteModel) -> Unit) {
+    fun bind(
+        noteModel: NoteModel,
+        onItemLongClicked: (noteModel: NoteModel) -> Unit,
+        onItemClicked: (noteModel: NoteModel) -> Unit
+    ) {
         with(itemView) {
             findViewById<MaterialTextView>(R.id.note_item_title).text = noteModel.title
             findViewById<MaterialTextView>(R.id.note_item_description).text = noteModel.description
@@ -46,6 +51,7 @@ class NoteItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 onItemLongClicked.invoke(noteModel)
                 return@setOnLongClickListener false
             }
+            itemView.setOnClickListener { onItemClicked.invoke(noteModel) }
         }
     }
 }

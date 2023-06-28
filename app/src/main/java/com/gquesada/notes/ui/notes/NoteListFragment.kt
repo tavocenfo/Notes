@@ -15,12 +15,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.gquesada.notes.R
 import com.gquesada.notes.data.database.database.AppDatabase
 import com.gquesada.notes.data.datasources.DatabaseNoteDataSource
-import com.gquesada.notes.data.datasources.LocalNoteDataSource
 import com.gquesada.notes.data.repositories.NoteRepositoryImpl
 import com.gquesada.notes.domain.models.NoteModel
 import com.gquesada.notes.domain.usecases.DeleteNoteUseCase
 import com.gquesada.notes.domain.usecases.GetNotesUseCase
-import com.gquesada.notes.ui.addnotes.views.AddNoteFragment
 import com.gquesada.notes.ui.main.viewmodels.MainViewModel
 import com.gquesada.notes.ui.main.viewmodels.NavigationScreen
 import com.gquesada.notes.ui.notes.adapters.NoteListAdapter
@@ -54,7 +52,8 @@ class NoteListFragment : Fragment() {
 
     private val adapter by lazy {
         NoteListAdapter(
-            onItemLongClicked = { item -> onListItemClicked(item) }
+            onItemLongClicked = { item -> onLongListItemClicked(item) },
+            onItemClicked = { item -> onListItemClicked(item) }
         )
     }
 
@@ -107,7 +106,7 @@ class NoteListFragment : Fragment() {
         }
     }
 
-    private fun onListItemClicked(noteModel: NoteModel) {
+    private fun onLongListItemClicked(noteModel: NoteModel) {
         AlertDialog.Builder(context)
             .setTitle(R.string.remove_note_confirm_title)
             .setMessage(getString(R.string.remove_note_confirm_message, noteModel.title))
@@ -116,6 +115,10 @@ class NoteListFragment : Fragment() {
             }
             .setNegativeButton(R.string.confirm_alert_negative_action, null)
             .show()
+    }
+
+    private fun onListItemClicked(noteModel: NoteModel) {
+        mainViewModel.navigateTo(NavigationScreen.EditNote(noteModel))
     }
 
 }
