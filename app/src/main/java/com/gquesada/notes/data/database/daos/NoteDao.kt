@@ -16,6 +16,9 @@ abstract class NoteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insert(note: NoteEntity): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun insert(notes: List<NoteEntity>)
+
     @Update(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun update(note: NoteEntity)
 

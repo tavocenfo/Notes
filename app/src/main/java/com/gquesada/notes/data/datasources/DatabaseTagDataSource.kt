@@ -13,6 +13,10 @@ class DatabaseTagDataSource(
     suspend fun insert(tagEntity: TagEntity): Long =
         tagDao.insert(tagEntity)
 
+    suspend fun insert(tags: List<TagEntity>) {
+        tagDao.insert(tags)
+    }
+
     suspend fun delete(tagEntity: TagEntity) {
         tagDao.delete(tagEntity)
     }

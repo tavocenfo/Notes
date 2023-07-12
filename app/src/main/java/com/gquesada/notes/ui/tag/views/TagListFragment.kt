@@ -20,6 +20,8 @@ import com.google.android.material.textfield.TextInputEditText
 import com.gquesada.notes.R
 import com.gquesada.notes.data.database.database.AppDatabase
 import com.gquesada.notes.data.datasources.DatabaseTagDataSource
+import com.gquesada.notes.data.datasources.RemoteTagDataSource
+import com.gquesada.notes.data.network.TagApiService
 import com.gquesada.notes.data.repositories.TagRepositoryImpl
 import com.gquesada.notes.domain.models.TagModel
 import com.gquesada.notes.domain.usecases.AddTagUseCase
@@ -32,6 +34,8 @@ import com.gquesada.notes.ui.tag.viewmodels.EditAlertUIState
 import com.gquesada.notes.ui.tag.viewmodels.ScreenMode
 import com.gquesada.notes.ui.tag.viewmodels.TagListViewModel
 import com.gquesada.notes.ui.tag.viewmodels.factories.TagListViewModelFactory
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 
 private const val EDIT_MENU_ITEM = 1
 private const val REMOVE_MENU_ITEM = 2
@@ -42,10 +46,22 @@ class TagListFragment : Fragment() {
         const val TAG_ADDED_REQUEST_KEY = "TAG_ADDED_REQUEST_KEY"
     }
 
+    private val retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl("http://192.168.1.14:3000")
+            .addConverterFactory(MoshiConverterFactory.create())
+            .build()
+    }
+
+    private val tagApiService by lazy {
+        retrofit.create(TagApiService::class.java)
+    }
+
+    private val remoteTagDataSource by lazy { RemoteTagDataSource(tagApiService) }
     private val adapter by lazy { TagListAdapter(::onTagSelected) }
     private val tagDao by lazy { AppDatabase.getInstance(requireContext()).getTagDao() }
     private val tagDataSource by lazy { DatabaseTagDataSource(tagDao) }
-    private val repository by lazy { TagRepositoryImpl(tagDataSource) }
+    private val repository by lazy { TagRepositoryImpl(tagDataSource, remoteTagDataSource) }
     private val getTagListUseCase by lazy { GetTagListUseCase(repository) }
     private val deleteTagUseCase by lazy { DeleteTagUseCase(repository) }
     private val addTagUseCase by lazy { AddTagUseCase(repository) }

@@ -15,6 +15,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.gquesada.notes.R
 import com.gquesada.notes.data.database.database.AppDatabase
 import com.gquesada.notes.data.datasources.DatabaseNoteDataSource
+import com.gquesada.notes.data.datasources.DatabaseTagDataSource
+import com.gquesada.notes.data.datasources.RemoteNoteDataSource
+import com.gquesada.notes.data.network.NoteApiService
 import com.gquesada.notes.data.repositories.NoteRepositoryImpl
 import com.gquesada.notes.domain.models.NoteModel
 import com.gquesada.notes.domain.usecases.DeleteNoteUseCase
@@ -24,15 +27,34 @@ import com.gquesada.notes.ui.main.viewmodels.NavigationScreen
 import com.gquesada.notes.ui.notes.adapters.NoteListAdapter
 import com.gquesada.notes.ui.notes.viewmodels.NoteListViewModel
 import com.gquesada.notes.ui.notes.viewmodels.factories.NoteListViewModelFactory
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 
 
 class NoteListFragment : Fragment() {
 
+    private val retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl("http://192.168.1.14:3000")
+            .addConverterFactory(MoshiConverterFactory.create())
+            .build()
+    }
+
+    private val noteApiService by lazy { retrofit.create(NoteApiService::class.java) }
+
     private val tagDao by lazy { AppDatabase.getInstance(requireContext()).getTagDao() }
     private val noteDao by lazy { AppDatabase.getInstance(requireContext()).getNotesDao() }
     private val noteDataSource by lazy { DatabaseNoteDataSource(tagDao, noteDao) }
+    private val remoteNoteDataSource by lazy { RemoteNoteDataSource(noteApiService) }
+    private val tagDataSource by lazy { DatabaseTagDataSource(tagDao) }
 
-    private val repository by lazy { NoteRepositoryImpl(noteDataSource = noteDataSource) }
+    private val repository by lazy {
+        NoteRepositoryImpl(
+            noteDataSource,
+            remoteNoteDataSource,
+            tagDataSource
+        )
+    }
 
     private val getNoteListUseCase by lazy { GetNotesUseCase(repository) }
     private val deleteNoteUseCase by lazy { DeleteNoteUseCase(repository) }

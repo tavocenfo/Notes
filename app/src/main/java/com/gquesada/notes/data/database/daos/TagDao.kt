@@ -16,6 +16,9 @@ abstract class TagDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insert(tagEntity: TagEntity): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun insert(tags: List<TagEntity>)
+
     @Update(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun update(tagEntity: TagEntity)
 

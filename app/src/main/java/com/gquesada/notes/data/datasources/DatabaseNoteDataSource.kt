@@ -4,7 +4,6 @@ import com.gquesada.notes.data.database.daos.NoteDao
 import com.gquesada.notes.data.database.daos.TagDao
 import com.gquesada.notes.data.database.entities.NoteAndTag
 import com.gquesada.notes.data.database.entities.NoteEntity
-import com.gquesada.notes.data.models.LocalNote
 import kotlinx.coroutines.flow.Flow
 
 class DatabaseNoteDataSource(
@@ -14,8 +13,12 @@ class DatabaseNoteDataSource(
 
     fun getAllNotes(): Flow<List<NoteAndTag>> = tagDao.getTagsAndNotes()
 
-    suspend fun addNote(noteEntity: NoteEntity):Long =
-       noteDao.insert(noteEntity)
+    suspend fun addNote(noteEntity: NoteEntity): Long =
+        noteDao.insert(noteEntity)
+
+    suspend fun addNotes(notes: List<NoteEntity>) {
+        noteDao.insert(notes)
+    }
 
     suspend fun deleteNote(noteEntity: NoteEntity) {
         noteDao.delete(noteEntity)
