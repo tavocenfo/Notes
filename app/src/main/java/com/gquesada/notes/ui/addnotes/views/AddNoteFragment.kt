@@ -22,6 +22,7 @@ import com.gquesada.notes.data.repositories.NoteRepositoryImpl
 import com.gquesada.notes.domain.models.NoteModel
 import com.gquesada.notes.domain.models.TagModel
 import com.gquesada.notes.domain.usecases.AddNoteUseCase
+import com.gquesada.notes.domain.usecases.EditNoteUseCase
 import com.gquesada.notes.ui.addnotes.viewmodels.AddNoteViewModel
 import com.gquesada.notes.ui.addnotes.viewmodels.factories.AddNoteViewModelFactory
 import com.gquesada.notes.ui.main.viewmodels.MainViewModel
@@ -44,7 +45,10 @@ class AddNoteFragment private constructor() : Fragment() {
     private val noteDao by lazy { AppDatabase.getInstance(requireContext()).getNotesDao() }
     private val noteDataSource by lazy { DatabaseNoteDataSource(tagDao, noteDao) }
     private val viewModelFactory: AddNoteViewModelFactory by lazy {
-        AddNoteViewModelFactory(AddNoteUseCase(NoteRepositoryImpl(noteDataSource)))
+        AddNoteViewModelFactory(
+            AddNoteUseCase(NoteRepositoryImpl(noteDataSource)),
+            EditNoteUseCase(NoteRepositoryImpl(noteDataSource))
+        )
     }
 
 
@@ -117,6 +121,15 @@ class AddNoteFragment private constructor() : Fragment() {
         }
         viewModel.screenTitleLiveData.observe(viewLifecycleOwner) { stringId ->
             toolbar.title = getString(stringId)
+        }
+        viewModel.noteLiveData.observe(viewLifecycleOwner) { noteModel ->
+            edtTitle.setText(noteModel.title)
+            edtDescription.setText(noteModel.description)
+        }
+        viewModel.noteUpdatedLiveData.observe(viewLifecycleOwner) {
+            Toast.makeText(requireContext(), R.string.add_note_success_message, Toast.LENGTH_LONG)
+                .show()
+            parentFragmentManager.popBackStack()
         }
     }
 }

@@ -23,6 +23,8 @@
     <string name="add_note_empty_title_error">Please add a title for the note</string>
     <string name="add_note_empty_tag_error">Please add a tag for the note</string>
 
+    <string name="update_note_success_message">Note Updated!</string>
+
     <string name="remove_note_confirm_title">Remove Note</string>
     <string name="remove_note_confirm_message">Are you sure you want to remove %s?</string>
 

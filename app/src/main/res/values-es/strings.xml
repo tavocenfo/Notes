@@ -12,7 +12,8 @@
     <string name="search_query_hint">Buscar una nota</string>
 
     <string name="notes_list_screen_title">Notas</string>
-    <string name="add_note_screen_title">Add a note</string>
+    <string name="add_note_screen_title">Agregar una Nota</string>
+    <string name="edit_note_screen_title">Editar una Nota</string>
     <string name="tag_list_screen_title">Tags</string>
 
     <string name="add_note_title_hint_text">Title</string>
@@ -38,4 +39,5 @@
 
     <string name="confirm_alert_positive_action">Yes</string>
     <string name="confirm_alert_negative_action">Cancel</string>
+    <string name="update_note_success_message">Nota actualizada!</string>
 </resources>

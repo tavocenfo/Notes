@@ -1,5 +1,7 @@
 package com.gquesada.notes.domain.usecases
 
+import com.gquesada.notes.domain.exceptions.TagNullException
+import com.gquesada.notes.domain.exceptions.TitleEmptyException
 import com.gquesada.notes.domain.models.NoteModel
 import com.gquesada.notes.domain.models.TagModel
 import com.gquesada.notes.domain.repositories.NoteRepository
@@ -37,6 +39,3 @@ sealed class AddNoteUseCaseOutput {
     object Success : AddNoteUseCaseOutput()
     class Error(val cause: Exception) : AddNoteUseCaseOutput()
 }
-
-object TitleEmptyException : Exception()
-object TagNullException : Exception()
