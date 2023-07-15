@@ -1,3 +1,40 @@
 <resources>
     <string name="app_name">Notes</string>
+
+    <string name="no_notes_icon">No Notes icon</string>
+    <string name="no_notes_text">You have no tasks</string>
+
+    <string name="menu_search_item">Search</string>
+    <string name="menu_add_item">Add</string>
+    <string name="menu_edit_item">Edit</string>
+    <string name="menu_remove_item">Remove</string>
+    <string name="search_query_hint">Search your Note</string>
+
+    <string name="notes_list_screen_title">Notes</string>
+    <string name="add_note_screen_title">Add a note</string>
+    <string name="tag_list_screen_title">Tags</string>
+
+    <string name="add_note_title_hint_text">Title</string>
+    <string name="add_note_tag_text">Tag</string>
+    <string name="add_note_description_hint_text">Description</string>
+    <string name="add_note_action">Add Note</string>
+    <string name="add_note_success_message">Note Added!</string>
+    <string name="add_note_empty_title_error">Please add a title for the note</string>
+    <string name="add_note_empty_tag_error">Please add a tag for the note</string>
+
+    <string name="remove_note_confirm_title">Remove Note</string>
+    <string name="remove_note_confirm_message">Are you sure you want to remove %s?</string>
+
+    <string name="remove_tag_confirm_title">Remove Tag</string>
+    <string name="remove_tag_confirm_message">Are you sure you want to remove %s?</string>
+
+    <string name="add_tag_alert_title">Add a tag</string>
+    <string name="edit_tag_alert_title">Edit tag</string>
+    <string name="add_tag_positive_action">Add</string>
+    <string name="edit_tag_positive_action">Edit</string>
+    <string name="edit_tag_empty_name_error">Please add a name</string>
+
+
+    <string name="confirm_alert_positive_action">Yes</string>
+    <string name="confirm_alert_negative_action">Cancel</string>
 </resources>

@@ -6,5 +6,5 @@ data class LocalNote(
     val title: String,
     val description: String?,
     val tag: LocalTag,
-    val date: Int
+    val date: Long
 )

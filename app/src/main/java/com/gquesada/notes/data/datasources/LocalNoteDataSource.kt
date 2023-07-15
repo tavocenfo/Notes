@@ -3,7 +3,7 @@ package com.gquesada.notes.data.datasources
 import com.gquesada.notes.data.models.LocalNote
 import com.gquesada.notes.data.models.LocalTag
 
-class LocalNoteDataSource {
+object LocalNoteDataSource {
 
     private val notes = mutableListOf(
         LocalNote(

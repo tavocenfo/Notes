@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="note_item_padding">16dp</dimen>
+
+    <dimen name="list_item_padding">16dp</dimen>
+    <dimen name="add_note_icon_size">64dp</dimen>
+
+    <dimen name="no_notes_text_size">20sp</dimen>
+
 </resources>
