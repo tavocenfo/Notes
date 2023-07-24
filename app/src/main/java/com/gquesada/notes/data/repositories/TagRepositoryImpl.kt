@@ -4,6 +4,7 @@ import com.gquesada.notes.data.datasources.DatabaseTagDataSource
 import com.gquesada.notes.data.datasources.RemoteTagDataSource
 import com.gquesada.notes.data.mappers.TagMapper.toEntity
 import com.gquesada.notes.data.mappers.TagMapper.toModel
+import com.gquesada.notes.data.mappers.TagMapper.toRemote
 import com.gquesada.notes.domain.models.TagModel
 import com.gquesada.notes.domain.repositories.TagRepository
 import kotlinx.coroutines.flow.Flow
@@ -32,14 +33,17 @@ class TagRepositoryImpl(
 
 
     override suspend fun addTag(tag: TagModel) {
+        remoteTagDataSource.insert(tag.toRemote())
         databaseTagDataSource.insert(tag.toEntity())
     }
 
     override suspend fun removeTag(tag: TagModel) {
+        remoteTagDataSource.delete(tag.id.toInt())
         databaseTagDataSource.delete(tag.toEntity())
     }
 
     override suspend fun editTag(tag: TagModel) {
+        remoteTagDataSource.update(tag.toRemote())
         databaseTagDataSource.update(tag.toEntity())
     }
 }

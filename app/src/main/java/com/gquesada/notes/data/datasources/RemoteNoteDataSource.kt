@@ -14,4 +14,12 @@ class RemoteNoteDataSource(
     suspend fun deleteNote(noteId: Int) {
         noteApiService.delete(noteId)
     }
+
+    suspend fun insert(remoteNote: RemoteNote) {
+        noteApiService.insert(remoteNote)
+    }
+
+    suspend fun update(remoteNote: RemoteNote) {
+        noteApiService.update(remoteNote.id, remoteNote)
+    }
 }

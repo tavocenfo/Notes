@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -80,6 +81,7 @@ class TagListFragment : Fragment() {
     private lateinit var tagsRecyclerView: RecyclerView
     private lateinit var toolbar: MaterialToolbar
     private lateinit var fabAddAction: FloatingActionButton
+    private var dialog: AlertDialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -133,6 +135,13 @@ class TagListFragment : Fragment() {
         viewModel.showDeleteMessageLiveData.observe(viewLifecycleOwner, ::showRemoveConfirmMessage)
         viewModel.showEditAlertLiveData.observe(viewLifecycleOwner, ::showEditAlertDialog)
         viewModel.tagSavedLiveData.observe(viewLifecycleOwner, ::tagSaved)
+        viewModel.displayErrorMessage.observe(viewLifecycleOwner) { stringId ->
+            Toast.makeText(requireContext(), getString(stringId), Toast.LENGTH_SHORT).show()
+        }
+        viewModel.displaySuccessMessage.observe(viewLifecycleOwner) { stringId ->
+            Toast.makeText(requireContext(), getString(stringId), Toast.LENGTH_SHORT).show()
+            dialog?.dismiss()
+        }
     }
 
     private fun tagSaved(tag: TagModel) {
@@ -195,24 +204,23 @@ class TagListFragment : Fragment() {
 
     private fun showEditAlertDialog(uiState: EditAlertUIState) {
         var tagNameEditText: TextInputEditText? = null
-        val dialog = AlertDialog.Builder(requireContext())
+        dialog = AlertDialog.Builder(requireContext())
             .setTitle(uiState.title)
             .setView(R.layout.edit_tag_layout)
             .setPositiveButton(uiState.positiveButton) { _, _ -> }
             .setNegativeButton(R.string.confirm_alert_negative_action, null)
             .create()
-        dialog.setOnShowListener {
-            tagNameEditText = dialog.findViewById(R.id.edt_tag_name)
+        dialog?.setOnShowListener {
+            tagNameEditText = dialog?.findViewById(R.id.edt_tag_name)
             tagNameEditText?.setText(uiState.uiTag?.name)
         }
-        dialog.show()
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setOnClickListener {
+        dialog?.show()
+        dialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.setOnClickListener {
             val tagName = tagNameEditText?.text?.toString() ?: ""
             if (tagName.isEmpty()) {
                 tagNameEditText?.error = getString(R.string.edit_tag_empty_name_error)
             } else {
                 viewModel.editTag(tagName, uiState.uiTag)
-                dialog.dismiss()
             }
         }
     }

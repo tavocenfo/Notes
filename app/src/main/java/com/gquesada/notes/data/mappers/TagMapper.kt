@@ -11,13 +11,18 @@ object TagMapper {
         title = name
     )
 
-    fun TagModel.toEntity():TagEntity = TagEntity(
+    fun TagModel.toEntity(): TagEntity = TagEntity(
         id = id,
         name = title
     )
 
-    fun RemoteTag.toEntity():TagEntity = TagEntity(
+    fun RemoteTag.toEntity(): TagEntity = TagEntity(
         id = id.toLong(),
         name = name
+    )
+
+    fun TagModel.toRemote(): RemoteTag = RemoteTag(
+        id = id.toInt(),
+        name = title
     )
 }

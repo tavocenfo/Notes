@@ -8,7 +8,16 @@ class DeleteTagUseCase(
     private val repository: TagRepository
 ) {
 
-    suspend fun execute(tag: TagModel) {
-        repository.removeTag(tag)
-    }
+    suspend fun execute(tag: TagModel): DeleteTagUseCaseOutput =
+        try {
+            repository.removeTag(tag)
+            DeleteTagUseCaseOutput.Success
+        } catch (e: Exception) {
+            DeleteTagUseCaseOutput.Error
+        }
+}
+
+sealed class DeleteTagUseCaseOutput {
+    object Success : DeleteTagUseCaseOutput()
+    object Error : DeleteTagUseCaseOutput()
 }

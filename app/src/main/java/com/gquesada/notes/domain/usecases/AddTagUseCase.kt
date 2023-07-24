@@ -6,8 +6,17 @@ import com.gquesada.notes.domain.repositories.TagRepository
 class AddTagUseCase(
     private val tagRepository: TagRepository
 ) {
+    suspend fun execute(tagModel: TagModel): AddTagUseCaseOutput =
+        try {
+            tagRepository.addTag(tagModel)
+            AddTagUseCaseOutput.Success
+        } catch (e: Exception) {
+            AddTagUseCaseOutput.Error
+        }
 
-    suspend fun execute(tagModel: TagModel) {
-        tagRepository.addTag(tagModel)
-    }
+}
+
+sealed class AddTagUseCaseOutput {
+    object Success : AddTagUseCaseOutput()
+    object Error : AddTagUseCaseOutput()
 }

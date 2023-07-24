@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gquesada.notes.R
+import com.gquesada.notes.domain.exceptions.NetworkErrorException
+import com.gquesada.notes.domain.exceptions.TagNullException
 import com.gquesada.notes.domain.exceptions.TitleEmptyException
 import com.gquesada.notes.domain.models.NoteModel
 import com.gquesada.notes.domain.models.TagModel
@@ -126,8 +128,11 @@ class AddNoteViewModel(
                 _displayErrorMessageLiveData.value = R.string.add_note_empty_title_error
             }
 
-            else -> {
+            is TagNullException -> {
                 _displayErrorMessageLiveData.value = R.string.add_note_empty_tag_error
+            }
+            is NetworkErrorException -> {
+                _displayErrorMessageLiveData.value = R.string.error_updating_note_message
             }
         }
     }

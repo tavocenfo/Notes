@@ -8,6 +8,7 @@ import com.gquesada.notes.data.datasources.RemoteNoteDataSource
 import com.gquesada.notes.data.mappers.NoteMapper.noteEntityFromModel
 import com.gquesada.notes.data.mappers.NoteMapper.toEntity
 import com.gquesada.notes.data.mappers.NoteMapper.toNoteModelList
+import com.gquesada.notes.data.mappers.NoteMapper.toRemote
 import com.gquesada.notes.data.mappers.TagMapper.toEntity
 import com.gquesada.notes.data.network.models.RemoteNote
 import com.gquesada.notes.domain.models.NoteModel
@@ -40,11 +41,15 @@ class NoteRepositoryImpl(
             .map { it.toNoteModelList() }
 
 
-    override suspend fun addNote(note: NoteModel) =
-        noteDataSource.addNote(note.noteEntityFromModel())
+    override suspend fun addNote(note: NoteModel): Long {
+        remoteNoteDataSource.insert(note.toRemote())
+        return noteDataSource.addNote(note.noteEntityFromModel())
+    }
 
-    override suspend fun updateNote(note: NoteModel) =
+    override suspend fun updateNote(note: NoteModel) {
+        remoteNoteDataSource.update(note.toRemote())
         noteDataSource.updateNote(note.noteEntityFromModel())
+    }
 
     override suspend fun deleteNote(note: NoteModel) {
         remoteNoteDataSource.deleteNote(note.id.toInt())

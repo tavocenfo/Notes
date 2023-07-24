@@ -7,7 +7,18 @@ class EditTagUseCase(
     private val tagRepository: TagRepository
 ) {
 
-    suspend fun execute(tagModel: TagModel) {
-        tagRepository.editTag(tagModel)
-    }
+    suspend fun execute(tagModel: TagModel): EditTagUseCaseOutput =
+        try {
+            tagRepository.editTag(tagModel)
+            EditTagUseCaseOutput.Success
+        } catch (e: Exception) {
+            EditTagUseCaseOutput.Error
+        }
+
+
+}
+
+sealed class EditTagUseCaseOutput {
+    object Success : EditTagUseCaseOutput()
+    object Error : EditTagUseCaseOutput()
 }

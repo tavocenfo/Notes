@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.constraintlayout.widget.Group
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -125,6 +126,9 @@ class NoteListFragment : Fragment() {
                 emptyMessageView.visibility = View.GONE
                 notesRecyclerView.visibility = View.VISIBLE
             }
+        }
+        viewModel.displayErrorMessage.observe(viewLifecycleOwner) { resId ->
+            Toast.makeText(requireContext(), getString(resId), Toast.LENGTH_SHORT).show()
         }
     }
 

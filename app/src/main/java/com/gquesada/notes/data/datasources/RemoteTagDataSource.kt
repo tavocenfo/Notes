@@ -11,4 +11,16 @@ class RemoteTagDataSource(
         return tagApiService.getTags()
     }
 
+    suspend fun insert(remoteTag: RemoteTag) {
+        return tagApiService.insert(remoteTag)
+    }
+
+    suspend fun update(remoteTag: RemoteTag) {
+        tagApiService.update(remoteTag, remoteTag.id)
+    }
+
+    suspend fun delete(tagId: Int) {
+        tagApiService.delete(tagId)
+    }
+
 }

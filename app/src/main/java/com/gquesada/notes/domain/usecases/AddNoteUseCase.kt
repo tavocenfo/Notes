@@ -1,5 +1,6 @@
 package com.gquesada.notes.domain.usecases
 
+import com.gquesada.notes.domain.exceptions.NetworkErrorException
 import com.gquesada.notes.domain.exceptions.TagNullException
 import com.gquesada.notes.domain.exceptions.TitleEmptyException
 import com.gquesada.notes.domain.models.NoteModel
@@ -12,19 +13,24 @@ class AddNoteUseCase(
 
     suspend fun execute(input: AddNoteUseCaseInput): AddNoteUseCaseOutput {
         return input.tag?.let { tag ->
-            if (input.title.isEmpty()) {
-                AddNoteUseCaseOutput.Error(TitleEmptyException)
-            } else {
-                val note = NoteModel(
-                    id = 0,
-                    title = input.title,
-                    description = input.description,
-                    tag = tag,
-                    date = System.currentTimeMillis()
-                )
-                repository.addNote(note)
-                AddNoteUseCaseOutput.Success
+            try {
+                if (input.title.isEmpty()) {
+                    AddNoteUseCaseOutput.Error(TitleEmptyException)
+                } else {
+                    val note = NoteModel(
+                        id = 0,
+                        title = input.title,
+                        description = input.description,
+                        tag = tag,
+                        date = System.currentTimeMillis()
+                    )
+                    repository.addNote(note)
+                    AddNoteUseCaseOutput.Success
+                }
+            } catch (e: Exception) {
+                AddNoteUseCaseOutput.Error(NetworkErrorException)
             }
+
         } ?: AddNoteUseCaseOutput.Error(TagNullException)
     }
 }

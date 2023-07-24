@@ -40,4 +40,14 @@
 
     <string name="confirm_alert_positive_action">Yes</string>
     <string name="confirm_alert_negative_action">Cancel</string>
+
+    <string name="error_adding_tag_message">Error adding a tag. Please try again!</string>
+    <string name="error_updating_tag_message">Error updating a tag. Please try again!</string>
+    <string name="error_removing_tag_message">Error removing a tag. Please try again!</string>
+
+    <string name="tag_added_success_message">Tag was added!</string>
+    <string name="tag_updated_success_message">Tag was updated!</string>
+
+    <string name="error_removing_note_message">Error removing a Note. Please try again!</string>
+    <string name="error_updating_note_message">Error updating a Note. Please try again!</string>
 </resources>

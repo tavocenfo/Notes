@@ -3,6 +3,7 @@ package com.gquesada.notes.data.mappers
 import com.gquesada.notes.data.database.entities.NoteAndTag
 import com.gquesada.notes.data.database.entities.NoteEntity
 import com.gquesada.notes.data.mappers.TagMapper.toModel
+import com.gquesada.notes.data.mappers.TagMapper.toRemote
 import com.gquesada.notes.data.network.models.RemoteNote
 import com.gquesada.notes.domain.models.NoteModel
 
@@ -36,6 +37,14 @@ object NoteMapper {
         description = description,
         date = dateCreated,
         tagId = tag.id.toLong()
+    )
+
+    fun NoteModel.toRemote(): RemoteNote = RemoteNote(
+        id = id.toInt(),
+        title = title,
+        description = description,
+        dateCreated = date,
+        tag = tag.toRemote()
     )
 
 }

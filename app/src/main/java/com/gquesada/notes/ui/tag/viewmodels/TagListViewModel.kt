@@ -10,8 +10,11 @@ import androidx.lifecycle.viewModelScope
 import com.gquesada.notes.R
 import com.gquesada.notes.domain.models.TagModel
 import com.gquesada.notes.domain.usecases.AddTagUseCase
+import com.gquesada.notes.domain.usecases.AddTagUseCaseOutput
 import com.gquesada.notes.domain.usecases.DeleteTagUseCase
+import com.gquesada.notes.domain.usecases.DeleteTagUseCaseOutput
 import com.gquesada.notes.domain.usecases.EditTagUseCase
+import com.gquesada.notes.domain.usecases.EditTagUseCaseOutput
 import com.gquesada.notes.domain.usecases.GetTagListUseCase
 import com.gquesada.notes.ui.tag.models.UITag
 import kotlinx.coroutines.Dispatchers
@@ -39,6 +42,14 @@ class TagListViewModel(
     private val _tagSavedLiveData = MutableLiveData<TagModel>()
     val tagSavedLiveData: LiveData<TagModel>
         get() = _tagSavedLiveData
+
+    private val _displayErrorMessage: MutableLiveData<Int> = MutableLiveData()
+    val displayErrorMessage: LiveData<Int>
+        get() = _displayErrorMessage
+
+    private val _displaySuccessMessage: MutableLiveData<Int> = MutableLiveData()
+    val displaySuccessMessage: LiveData<Int>
+        get() = _displaySuccessMessage
 
     val screenModeLiveData: LiveData<ScreenMode> = tagListLiveData.map { data ->
         val isItemChecked = data.any { item -> item.isChecked }
@@ -105,23 +116,50 @@ class TagListViewModel(
 
     fun onRemoveItem(uiTag: UITag) {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
+            val result = withContext(Dispatchers.IO) {
                 deleteTagUseCase.execute(TagModel(id = uiTag.id, title = uiTag.name))
+            }
+            if (result is DeleteTagUseCaseOutput.Error) {
+                _displayErrorMessage.value = R.string.error_removing_tag_message
             }
         }
 
     }
 
     fun editTag(tagName: String, uiTag: UITag?) {
+        if (uiTag != null) {
+            updateTag(TagModel(uiTag.id, tagName))
+        } else {
+            insertTag(TagModel(id = 0, tagName))
+        }
+    }
+
+    private fun insertTag(tagModel: TagModel) {
         viewModelScope.launch {
-            if (uiTag != null) {
-                withContext(Dispatchers.IO) {
-                    editTagUseCase.execute(TagModel(uiTag.id, tagName))
-                }
-            } else {
-                withContext(Dispatchers.IO) {
-                    addTagUseCase.execute(TagModel(id = 0, tagName))
-                }
+            val result = withContext(Dispatchers.IO) {
+                addTagUseCase.execute(tagModel)
+            }
+            when (result) {
+                is AddTagUseCaseOutput.Success -> _displaySuccessMessage.value =
+                    R.string.tag_added_success_message
+
+                is AddTagUseCaseOutput.Error -> _displayErrorMessage.value =
+                    R.string.error_adding_tag_message
+            }
+        }
+    }
+
+    private fun updateTag(tagModel: TagModel) {
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                editTagUseCase.execute(tagModel)
+            }
+            when (result) {
+                is EditTagUseCaseOutput.Success -> _displaySuccessMessage.value =
+                    R.string.tag_updated_success_message
+
+                is EditTagUseCaseOutput.Error -> _displayErrorMessage.value =
+                    R.string.error_updating_tag_message
             }
         }
     }
