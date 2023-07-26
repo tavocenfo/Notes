@@ -4,10 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gquesada.notes.domain.models.NoteModel
+import com.gquesada.notes.ui.util.SingleLiveEvent
 
 class MainViewModel : ViewModel() {
 
-    private val _navigationEvent = MutableLiveData<NavigationScreen>()
+    private val _navigationEvent = SingleLiveEvent<NavigationScreen>()
     val navigationEvent: LiveData<NavigationScreen>
         get() = _navigationEvent
 

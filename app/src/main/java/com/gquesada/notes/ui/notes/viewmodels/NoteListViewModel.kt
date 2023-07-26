@@ -9,6 +9,7 @@ import com.gquesada.notes.domain.models.NoteModel
 import com.gquesada.notes.domain.usecases.DeleteNoteUseCase
 import com.gquesada.notes.domain.usecases.DeleteNoteUseCaseOutput
 import com.gquesada.notes.domain.usecases.GetNotesUseCase
+import com.gquesada.notes.ui.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
@@ -23,7 +24,7 @@ class NoteListViewModel(
     val noteListLiveData: LiveData<List<NoteModel>>
         get() = _noteListLiveData
 
-    private val _displayErrorMessage = MutableLiveData<Int>()
+    private val _displayErrorMessage = SingleLiveEvent<Int>()
     val displayErrorMessage: LiveData<Int>
         get() = _displayErrorMessage
 

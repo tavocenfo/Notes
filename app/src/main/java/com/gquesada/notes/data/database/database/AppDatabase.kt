@@ -15,22 +15,4 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getNotesDao(): NoteDao
     abstract fun getTagDao(): TagDao
 
-    companion object {
-
-        @Volatile
-        private var INSTANCE: AppDatabase? = null
-
-        fun getInstance(context: Context): AppDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    AppDatabase::class.java,
-                    "notes-db"
-                ).build()
-                INSTANCE = instance
-                instance
-            }
-        }
-    }
-
 }

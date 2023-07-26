@@ -14,23 +14,13 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.gquesada.notes.R
-import com.gquesada.notes.data.database.database.AppDatabase
-import com.gquesada.notes.data.datasources.DatabaseNoteDataSource
-import com.gquesada.notes.data.datasources.DatabaseTagDataSource
-import com.gquesada.notes.data.datasources.RemoteNoteDataSource
-import com.gquesada.notes.data.network.NoteApiService
-import com.gquesada.notes.data.repositories.NoteRepositoryImpl
 import com.gquesada.notes.domain.models.NoteModel
 import com.gquesada.notes.domain.models.TagModel
-import com.gquesada.notes.domain.usecases.AddNoteUseCase
-import com.gquesada.notes.domain.usecases.EditNoteUseCase
 import com.gquesada.notes.ui.addnotes.viewmodels.AddNoteViewModel
-import com.gquesada.notes.ui.addnotes.viewmodels.factories.AddNoteViewModelFactory
 import com.gquesada.notes.ui.main.viewmodels.MainViewModel
 import com.gquesada.notes.ui.main.viewmodels.NavigationScreen
 import com.gquesada.notes.ui.tag.views.TagListFragment.Companion.TAG_ADDED_REQUEST_KEY
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class AddNoteFragment private constructor() : Fragment() {
@@ -41,31 +31,9 @@ class AddNoteFragment private constructor() : Fragment() {
     private lateinit var edtDescription: EditText
     private lateinit var fabAddNote: FloatingActionButton
     private lateinit var mainViewModel: MainViewModel
-    private lateinit var viewModel: AddNoteViewModel
     private lateinit var toolbar: MaterialToolbar
 
-    private val retrofit by lazy {
-       Retrofit.Builder()
-           .baseUrl("http://192.168.1.14:3000")
-           .addConverterFactory(MoshiConverterFactory.create())
-           .build()
-    }
-
-    private val noteApiService by lazy { retrofit.create(NoteApiService::class.java) }
-
-    private val tagDao by lazy { AppDatabase.getInstance(requireContext()).getTagDao() }
-    private val noteDao by lazy { AppDatabase.getInstance(requireContext()).getNotesDao() }
-    private val noteDataSource by lazy { DatabaseNoteDataSource(tagDao, noteDao) }
-    private val tagDataSource by lazy { DatabaseTagDataSource(tagDao) }
-    private val remoteNoteDataSource by lazy { RemoteNoteDataSource(noteApiService) }
-    private val noteRepository by lazy { NoteRepositoryImpl(noteDataSource, remoteNoteDataSource, tagDataSource) }
-    private val viewModelFactory: AddNoteViewModelFactory by lazy {
-        AddNoteViewModelFactory(
-            AddNoteUseCase(noteRepository),
-            EditNoteUseCase(noteRepository)
-        )
-    }
-
+    private val viewModel: AddNoteViewModel by viewModel()
 
     companion object {
 
@@ -85,7 +53,6 @@ class AddNoteFragment private constructor() : Fragment() {
             val tag = bundle.getParcelable<TagModel>(requestKey) ?: return@setFragmentResultListener
             viewModel.setTag(tag)
         }
-        viewModel = ViewModelProvider(this, viewModelFactory)[AddNoteViewModel::class.java]
         viewModel.setNoteModel(arguments?.getParcelable(NOTE_MODEL_KEY))
     }
 

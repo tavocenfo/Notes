@@ -16,6 +16,7 @@ import com.gquesada.notes.domain.usecases.AddNoteUseCaseOutput
 import com.gquesada.notes.domain.usecases.EditNoteUseCase
 import com.gquesada.notes.domain.usecases.EditNoteUseCaseInput
 import com.gquesada.notes.domain.usecases.EditNoteUseCaseOutput
+import com.gquesada.notes.ui.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -29,17 +30,22 @@ class AddNoteViewModel(
     val tagAddedLiveData: LiveData<TagModel>
         get() = _tagAddedLiveData
 
+    // Utilizar MutableLiveData para aquellas propiedades cuyo valor modifica la
+    // vista y debe prevalecer en memoria en caso de que la vista (Fragment / Activity)
+    // se reconstruya
     private val _noteLiveData = MutableLiveData<NoteModel>()
     val noteLiveData: LiveData<NoteModel>
         get() = _noteLiveData
 
-    private val _displayErrorMessageLiveData = MutableLiveData<Int>()
+    // Utilizar SingleLiveEvent para aquellas propiedades que representan un Evento y
+    // su valor deber ser consumido una unica vez
+    private val _displayErrorMessageLiveData = SingleLiveEvent<Int>()
     val displayErrorMessageLiveData: LiveData<Int>
         get() = _displayErrorMessageLiveData
-    private val _noteAddedLiveData = MutableLiveData<Unit>()
+    private val _noteAddedLiveData = SingleLiveEvent<Unit>()
     val noteAddedLiveData: LiveData<Unit>
         get() = _noteAddedLiveData
-    private val _noteUpdatedLiveData = MutableLiveData<Unit>()
+    private val _noteUpdatedLiveData = SingleLiveEvent<Unit>()
     val noteUpdatedLiveData: LiveData<Unit>
         get() = _noteUpdatedLiveData
 

@@ -17,6 +17,7 @@ import com.gquesada.notes.domain.usecases.EditTagUseCase
 import com.gquesada.notes.domain.usecases.EditTagUseCaseOutput
 import com.gquesada.notes.domain.usecases.GetTagListUseCase
 import com.gquesada.notes.ui.tag.models.UITag
+import com.gquesada.notes.ui.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -33,21 +34,22 @@ class TagListViewModel(
     private val _tagListLiveData = MutableLiveData<List<UITag>>()
     val tagListLiveData: LiveData<List<UITag>>
         get() = _tagListLiveData
-    private val _showDeleteMessageLiveData = MutableLiveData<UITag>()
+
+    private val _showDeleteMessageLiveData = SingleLiveEvent<UITag>()
     val showDeleteMessageLiveData: LiveData<UITag>
         get() = _showDeleteMessageLiveData
-    private val _showEditAlertLiveData = MutableLiveData<EditAlertUIState>()
+    private val _showEditAlertLiveData = SingleLiveEvent<EditAlertUIState>()
     val showEditAlertLiveData: LiveData<EditAlertUIState>
         get() = _showEditAlertLiveData
-    private val _tagSavedLiveData = MutableLiveData<TagModel>()
+    private val _tagSavedLiveData = SingleLiveEvent<TagModel>()
     val tagSavedLiveData: LiveData<TagModel>
         get() = _tagSavedLiveData
 
-    private val _displayErrorMessage: MutableLiveData<Int> = MutableLiveData()
+    private val _displayErrorMessage: SingleLiveEvent<Int> = SingleLiveEvent()
     val displayErrorMessage: LiveData<Int>
         get() = _displayErrorMessage
 
-    private val _displaySuccessMessage: MutableLiveData<Int> = MutableLiveData()
+    private val _displaySuccessMessage: SingleLiveEvent<Int> = SingleLiveEvent()
     val displaySuccessMessage: LiveData<Int>
         get() = _displaySuccessMessage
 

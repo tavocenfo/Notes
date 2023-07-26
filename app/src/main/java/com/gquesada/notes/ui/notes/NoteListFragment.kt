@@ -8,66 +8,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.constraintlayout.widget.Group
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.gquesada.notes.R
-import com.gquesada.notes.data.database.database.AppDatabase
-import com.gquesada.notes.data.datasources.DatabaseNoteDataSource
-import com.gquesada.notes.data.datasources.DatabaseTagDataSource
-import com.gquesada.notes.data.datasources.RemoteNoteDataSource
-import com.gquesada.notes.data.network.NoteApiService
-import com.gquesada.notes.data.repositories.NoteRepositoryImpl
 import com.gquesada.notes.domain.models.NoteModel
-import com.gquesada.notes.domain.usecases.DeleteNoteUseCase
-import com.gquesada.notes.domain.usecases.GetNotesUseCase
 import com.gquesada.notes.ui.main.viewmodels.MainViewModel
 import com.gquesada.notes.ui.main.viewmodels.NavigationScreen
 import com.gquesada.notes.ui.notes.adapters.NoteListAdapter
 import com.gquesada.notes.ui.notes.viewmodels.NoteListViewModel
-import com.gquesada.notes.ui.notes.viewmodels.factories.NoteListViewModelFactory
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class NoteListFragment : Fragment() {
 
-    private val retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl("http://192.168.1.14:3000")
-            .addConverterFactory(MoshiConverterFactory.create())
-            .build()
-    }
-
-    private val noteApiService by lazy { retrofit.create(NoteApiService::class.java) }
-
-    private val tagDao by lazy { AppDatabase.getInstance(requireContext()).getTagDao() }
-    private val noteDao by lazy { AppDatabase.getInstance(requireContext()).getNotesDao() }
-    private val noteDataSource by lazy { DatabaseNoteDataSource(tagDao, noteDao) }
-    private val remoteNoteDataSource by lazy { RemoteNoteDataSource(noteApiService) }
-    private val tagDataSource by lazy { DatabaseTagDataSource(tagDao) }
-
-    private val repository by lazy {
-        NoteRepositoryImpl(
-            noteDataSource,
-            remoteNoteDataSource,
-            tagDataSource
-        )
-    }
-
-    private val getNoteListUseCase by lazy { GetNotesUseCase(repository) }
-    private val deleteNoteUseCase by lazy { DeleteNoteUseCase(repository) }
-
-    private val viewModelFactory by lazy {
-        NoteListViewModelFactory(
-            getNoteListUseCase,
-            deleteNoteUseCase
-        )
-    }
-    private lateinit var viewModel: NoteListViewModel
-    private lateinit var mainViewModel: MainViewModel
+    private val viewModel: NoteListViewModel by viewModel()
+    private val mainViewModel: MainViewModel by activityViewModel()
 
     private lateinit var notesRecyclerView: RecyclerView
     private lateinit var emptyMessageView: Group
@@ -87,8 +45,6 @@ class NoteListFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_note_list, container, false)
         initViews(view)
-        viewModel = ViewModelProvider(this, viewModelFactory)[NoteListViewModel::class.java]
-        mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
         observe()
         return view
     }

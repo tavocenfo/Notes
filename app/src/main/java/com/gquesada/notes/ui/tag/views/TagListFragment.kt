@@ -11,7 +11,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,24 +18,13 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.gquesada.notes.R
-import com.gquesada.notes.data.database.database.AppDatabase
-import com.gquesada.notes.data.datasources.DatabaseTagDataSource
-import com.gquesada.notes.data.datasources.RemoteTagDataSource
-import com.gquesada.notes.data.network.TagApiService
-import com.gquesada.notes.data.repositories.TagRepositoryImpl
 import com.gquesada.notes.domain.models.TagModel
-import com.gquesada.notes.domain.usecases.AddTagUseCase
-import com.gquesada.notes.domain.usecases.DeleteTagUseCase
-import com.gquesada.notes.domain.usecases.EditTagUseCase
-import com.gquesada.notes.domain.usecases.GetTagListUseCase
 import com.gquesada.notes.ui.tag.adapters.TagListAdapter
 import com.gquesada.notes.ui.tag.models.UITag
 import com.gquesada.notes.ui.tag.viewmodels.EditAlertUIState
 import com.gquesada.notes.ui.tag.viewmodels.ScreenMode
 import com.gquesada.notes.ui.tag.viewmodels.TagListViewModel
-import com.gquesada.notes.ui.tag.viewmodels.factories.TagListViewModelFactory
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 private const val EDIT_MENU_ITEM = 1
 private const val REMOVE_MENU_ITEM = 2
@@ -47,37 +35,11 @@ class TagListFragment : Fragment() {
         const val TAG_ADDED_REQUEST_KEY = "TAG_ADDED_REQUEST_KEY"
     }
 
-    private val retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl("http://192.168.1.14:3000")
-            .addConverterFactory(MoshiConverterFactory.create())
-            .build()
-    }
 
-    private val tagApiService by lazy {
-        retrofit.create(TagApiService::class.java)
-    }
-
-    private val remoteTagDataSource by lazy { RemoteTagDataSource(tagApiService) }
     private val adapter by lazy { TagListAdapter(::onTagSelected) }
-    private val tagDao by lazy { AppDatabase.getInstance(requireContext()).getTagDao() }
-    private val tagDataSource by lazy { DatabaseTagDataSource(tagDao) }
-    private val repository by lazy { TagRepositoryImpl(tagDataSource, remoteTagDataSource) }
-    private val getTagListUseCase by lazy { GetTagListUseCase(repository) }
-    private val deleteTagUseCase by lazy { DeleteTagUseCase(repository) }
-    private val addTagUseCase by lazy { AddTagUseCase(repository) }
-    private val editTagUseCase by lazy { EditTagUseCase(repository) }
-    private val viewModelFactory by lazy {
-        TagListViewModelFactory(
-            getTagListUseCase,
-            deleteTagUseCase,
-            addTagUseCase,
-            editTagUseCase
-        )
-    }
 
 
-    private lateinit var viewModel: TagListViewModel
+    private val viewModel: TagListViewModel by viewModel()
     private lateinit var tagsRecyclerView: RecyclerView
     private lateinit var toolbar: MaterialToolbar
     private lateinit var fabAddAction: FloatingActionButton
@@ -90,7 +52,6 @@ class TagListFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_tag_list, container, false)
         initViews(view)
-        viewModel = ViewModelProvider(this, viewModelFactory)[TagListViewModel::class.java]
         return view
     }
 

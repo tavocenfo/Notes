@@ -10,10 +10,11 @@ import com.gquesada.notes.ui.main.viewmodels.MainViewModel
 import com.gquesada.notes.ui.main.viewmodels.NavigationScreen
 import com.gquesada.notes.ui.notes.NoteListFragment
 import com.gquesada.notes.ui.tag.views.TagListFragment
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,7 +22,6 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             navigateToFragment(NoteListFragment(), true)
         }
-        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         observe()
     }
 
