@@ -1,5 +1,6 @@
 package com.gquesada.notes.data.repositories
 
+import com.gquesada.notes.core.network.Extensions.isNotAuthorizedException
 import com.gquesada.notes.data.database.entities.NoteEntity
 import com.gquesada.notes.data.database.entities.TagEntity
 import com.gquesada.notes.data.datasources.DatabaseNoteDataSource
@@ -36,7 +37,11 @@ class NoteRepositoryImpl(
             emitAll(noteDataSource.getAllNotes())
         }
             .catch {
-                emitAll(noteDataSource.getAllNotes())
+                if (it.isNotAuthorizedException()) {
+                    throw it
+                } else {
+                    emitAll(noteDataSource.getAllNotes())
+                }
             }
             .map { it.toNoteModelList() }
 

@@ -9,8 +9,10 @@ import com.gquesada.notes.domain.models.NoteModel
 import com.gquesada.notes.domain.usecases.DeleteNoteUseCase
 import com.gquesada.notes.domain.usecases.DeleteNoteUseCaseOutput
 import com.gquesada.notes.domain.usecases.GetNotesUseCase
+import com.gquesada.notes.ui.base.BaseViewModel
 import com.gquesada.notes.ui.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -18,7 +20,7 @@ import kotlinx.coroutines.withContext
 class NoteListViewModel(
     private val getNotesUseCase: GetNotesUseCase,
     private val deleteNoteUseCase: DeleteNoteUseCase,
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _noteListLiveData = MutableLiveData<List<NoteModel>>()
     val noteListLiveData: LiveData<List<NoteModel>>
@@ -48,6 +50,7 @@ class NoteListViewModel(
         viewModelScope.launch {
             getNotesUseCase.execute()
                 .flowOn(Dispatchers.IO)
+                .catch { handleErrorException(it) }
                 .collect { notes ->
                     _noteListLiveData.value = notes
                 }
@@ -62,7 +65,9 @@ class NoteListViewModel(
             }
             //luego modificar UI
             if (result is DeleteNoteUseCaseOutput.Error) {
-                _displayErrorMessage.value = R.string.error_removing_note_message
+                handleErrorException(result.exception) {
+                    _displayErrorMessage.value = R.string.error_removing_note_message
+                }
             }
 
         }

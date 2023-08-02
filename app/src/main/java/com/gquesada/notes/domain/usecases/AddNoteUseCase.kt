@@ -1,5 +1,6 @@
 package com.gquesada.notes.domain.usecases
 
+import com.gquesada.notes.core.network.Extensions.isNotAuthorizedException
 import com.gquesada.notes.domain.exceptions.NetworkErrorException
 import com.gquesada.notes.domain.exceptions.TagNullException
 import com.gquesada.notes.domain.exceptions.TitleEmptyException
@@ -28,7 +29,11 @@ class AddNoteUseCase(
                     AddNoteUseCaseOutput.Success
                 }
             } catch (e: Exception) {
-                AddNoteUseCaseOutput.Error(NetworkErrorException)
+                if (e.isNotAuthorizedException()) {
+                    AddNoteUseCaseOutput.Error(e)
+                } else {
+                    AddNoteUseCaseOutput.Error(NetworkErrorException)
+                }
             }
 
         } ?: AddNoteUseCaseOutput.Error(TagNullException)

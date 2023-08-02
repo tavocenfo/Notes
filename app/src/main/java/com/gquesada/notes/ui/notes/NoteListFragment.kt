@@ -11,25 +11,30 @@ import androidx.constraintlayout.widget.Group
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.gquesada.notes.R
 import com.gquesada.notes.domain.models.NoteModel
+import com.gquesada.notes.ui.base.BaseFragment
 import com.gquesada.notes.ui.main.viewmodels.MainViewModel
 import com.gquesada.notes.ui.main.viewmodels.NavigationScreen
+import com.gquesada.notes.ui.main.views.MainActivity
 import com.gquesada.notes.ui.notes.adapters.NoteListAdapter
 import com.gquesada.notes.ui.notes.viewmodels.NoteListViewModel
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class NoteListFragment : Fragment() {
+class NoteListFragment : BaseFragment<NoteListViewModel>() {
 
-    private val viewModel: NoteListViewModel by viewModel()
-    private val mainViewModel: MainViewModel by activityViewModel()
+    override val viewModel: NoteListViewModel by viewModel()
 
     private lateinit var notesRecyclerView: RecyclerView
     private lateinit var emptyMessageView: Group
     private lateinit var fabButton: FloatingActionButton
+    private val toolbar: MaterialToolbar by lazy {
+        (requireActivity() as MainActivity).toolbar
+    }
 
     private val adapter by lazy {
         NoteListAdapter(
@@ -69,10 +74,12 @@ class NoteListFragment : Fragment() {
             emptyMessageView = findViewById(R.id.no_notes_group)
             fabButton = findViewById(R.id.floatingActionButton)
             fabButton.setOnClickListener { mainViewModel.navigateTo(NavigationScreen.AddNotes) }
+            toolbar.setTitle(R.string.notes_list_screen_title)
         }
     }
 
-    private fun observe() {
+    override fun observe() {
+        super.observe()
         viewModel.noteListLiveData.observe(viewLifecycleOwner) { list ->
             adapter.setData(list)
             if (list.isEmpty()) {

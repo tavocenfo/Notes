@@ -16,9 +16,11 @@ import com.gquesada.notes.domain.usecases.DeleteTagUseCaseOutput
 import com.gquesada.notes.domain.usecases.EditTagUseCase
 import com.gquesada.notes.domain.usecases.EditTagUseCaseOutput
 import com.gquesada.notes.domain.usecases.GetTagListUseCase
+import com.gquesada.notes.ui.base.BaseViewModel
 import com.gquesada.notes.ui.tag.models.UITag
 import com.gquesada.notes.ui.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -29,7 +31,7 @@ class TagListViewModel(
     private val deleteTagUseCase: DeleteTagUseCase,
     private val addTagUseCase: AddTagUseCase,
     private val editTagUseCase: EditTagUseCase
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _tagListLiveData = MutableLiveData<List<UITag>>()
     val tagListLiveData: LiveData<List<UITag>>
@@ -76,6 +78,7 @@ class TagListViewModel(
                     }
                 }
                 .flowOn(Dispatchers.IO)
+                .catch { handleErrorException(it) }
                 .collect { tags ->
                     _tagListLiveData.value = tags
                 }
@@ -122,7 +125,9 @@ class TagListViewModel(
                 deleteTagUseCase.execute(TagModel(id = uiTag.id, title = uiTag.name))
             }
             if (result is DeleteTagUseCaseOutput.Error) {
-                _displayErrorMessage.value = R.string.error_removing_tag_message
+                handleErrorException(result.exception) {
+                    _displayErrorMessage.value = R.string.error_removing_tag_message
+                }
             }
         }
 
@@ -145,8 +150,10 @@ class TagListViewModel(
                 is AddTagUseCaseOutput.Success -> _displaySuccessMessage.value =
                     R.string.tag_added_success_message
 
-                is AddTagUseCaseOutput.Error -> _displayErrorMessage.value =
-                    R.string.error_adding_tag_message
+                is AddTagUseCaseOutput.Error -> handleErrorException(result.exception) {
+                    _displayErrorMessage.value =
+                        R.string.error_adding_tag_message
+                }
             }
         }
     }
@@ -160,8 +167,10 @@ class TagListViewModel(
                 is EditTagUseCaseOutput.Success -> _displaySuccessMessage.value =
                     R.string.tag_updated_success_message
 
-                is EditTagUseCaseOutput.Error -> _displayErrorMessage.value =
-                    R.string.error_updating_tag_message
+                is EditTagUseCaseOutput.Error -> handleErrorException(result.exception) {
+                    _displayErrorMessage.value =
+                        R.string.error_updating_tag_message
+                }
             }
         }
     }

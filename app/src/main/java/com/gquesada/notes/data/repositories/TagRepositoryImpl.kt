@@ -1,5 +1,6 @@
 package com.gquesada.notes.data.repositories
 
+import com.gquesada.notes.core.network.Extensions.isNotAuthorizedException
 import com.gquesada.notes.data.datasources.DatabaseTagDataSource
 import com.gquesada.notes.data.datasources.RemoteTagDataSource
 import com.gquesada.notes.data.mappers.TagMapper.toEntity
@@ -26,6 +27,9 @@ class TagRepositoryImpl(
             databaseTagDataSource.insert(tags)
             emitAll(databaseTagDataSource.getTags())
         }.catch {
+            if (it.isNotAuthorizedException()) {
+                throw it
+            }
             emitAll(databaseTagDataSource.getTags())
         }
             .map { items -> items.map { tag -> tag.toModel() } }

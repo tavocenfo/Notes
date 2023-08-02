@@ -17,28 +17,31 @@ import com.gquesada.notes.R
 import com.gquesada.notes.domain.models.NoteModel
 import com.gquesada.notes.domain.models.TagModel
 import com.gquesada.notes.ui.addnotes.viewmodels.AddNoteViewModel
+import com.gquesada.notes.ui.base.BaseFragment
 import com.gquesada.notes.ui.main.viewmodels.MainViewModel
 import com.gquesada.notes.ui.main.viewmodels.NavigationScreen
+import com.gquesada.notes.ui.main.views.MainActivity
 import com.gquesada.notes.ui.tag.views.TagListFragment.Companion.TAG_ADDED_REQUEST_KEY
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class AddNoteFragment private constructor() : Fragment() {
+class AddNoteFragment private constructor() : BaseFragment<AddNoteViewModel>() {
 
     private lateinit var tagCell: View
     private lateinit var tvTagName: TextView
     private lateinit var edtTitle: EditText
     private lateinit var edtDescription: EditText
     private lateinit var fabAddNote: FloatingActionButton
-    private lateinit var mainViewModel: MainViewModel
-    private lateinit var toolbar: MaterialToolbar
+    private val toolbar: MaterialToolbar by lazy {
+        (requireActivity() as MainActivity).toolbar
+    }
 
-    private val viewModel: AddNoteViewModel by viewModel()
+    override val viewModel: AddNoteViewModel by viewModel()
 
     companion object {
 
         private const val NOTE_MODEL_KEY = "NOTE_MODEL_KEY"
-        fun newInstance(noteModel: NoteModel?): AddNoteFragment {
+        fun newInstance(noteModel: NoteModel? = null): AddNoteFragment {
             val bundle = bundleOf(NOTE_MODEL_KEY to noteModel)
             val fragment = AddNoteFragment()
             fragment.arguments = bundle
@@ -63,7 +66,6 @@ class AddNoteFragment private constructor() : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_add_note, container, false)
         initViews(view)
-        mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
         return view
     }
 
@@ -85,11 +87,11 @@ class AddNoteFragment private constructor() : Fragment() {
             fabAddNote.setOnClickListener {
                 viewModel.addNote(edtTitle.text.toString(), edtDescription.text.toString())
             }
-            toolbar = findViewById(R.id.toolbar)
         }
     }
 
-    private fun observe() {
+    override fun observe() {
+        super.observe()
         viewModel.tagAddedLiveData.observe(viewLifecycleOwner) { tag ->
             tvTagName.text = tag.title
         }

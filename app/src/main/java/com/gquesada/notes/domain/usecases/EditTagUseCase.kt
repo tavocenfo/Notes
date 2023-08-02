@@ -12,7 +12,7 @@ class EditTagUseCase(
             tagRepository.editTag(tagModel)
             EditTagUseCaseOutput.Success
         } catch (e: Exception) {
-            EditTagUseCaseOutput.Error
+            EditTagUseCaseOutput.Error(e)
         }
 
 
@@ -20,5 +20,5 @@ class EditTagUseCase(
 
 sealed class EditTagUseCaseOutput {
     object Success : EditTagUseCaseOutput()
-    object Error : EditTagUseCaseOutput()
+    data class Error(val exception:Exception) : EditTagUseCaseOutput()
 }

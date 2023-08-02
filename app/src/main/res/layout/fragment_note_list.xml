@@ -6,23 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.notes.NoteListFragment">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:collapsedTitleTextAppearance="?attr/textAppearanceTitleLarge"
-            app:layout_scrollEffect="compress"
-            app:layout_scrollFlags="noScroll"
-            app:title="@string/notes_list_screen_title" />
-
-
-    </com.google.android.material.appbar.AppBarLayout>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
         android:layout_width="match_parent"

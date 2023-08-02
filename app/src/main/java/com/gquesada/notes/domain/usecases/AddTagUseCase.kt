@@ -11,12 +11,12 @@ class AddTagUseCase(
             tagRepository.addTag(tagModel)
             AddTagUseCaseOutput.Success
         } catch (e: Exception) {
-            AddTagUseCaseOutput.Error
+            AddTagUseCaseOutput.Error(e)
         }
 
 }
 
 sealed class AddTagUseCaseOutput {
     object Success : AddTagUseCaseOutput()
-    object Error : AddTagUseCaseOutput()
+    data class Error(val exception: Exception) : AddTagUseCaseOutput()
 }

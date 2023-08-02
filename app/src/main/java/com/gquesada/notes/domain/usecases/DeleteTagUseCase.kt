@@ -13,11 +13,11 @@ class DeleteTagUseCase(
             repository.removeTag(tag)
             DeleteTagUseCaseOutput.Success
         } catch (e: Exception) {
-            DeleteTagUseCaseOutput.Error
+            DeleteTagUseCaseOutput.Error(e)
         }
 }
 
 sealed class DeleteTagUseCaseOutput {
     object Success : DeleteTagUseCaseOutput()
-    object Error : DeleteTagUseCaseOutput()
+    data class Error(val exception: Exception) : DeleteTagUseCaseOutput()
 }

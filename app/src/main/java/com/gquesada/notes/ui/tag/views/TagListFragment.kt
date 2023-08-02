@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,6 +18,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.gquesada.notes.R
 import com.gquesada.notes.domain.models.TagModel
+import com.gquesada.notes.ui.base.BaseFragment
+import com.gquesada.notes.ui.main.views.MainActivity
 import com.gquesada.notes.ui.tag.adapters.TagListAdapter
 import com.gquesada.notes.ui.tag.models.UITag
 import com.gquesada.notes.ui.tag.viewmodels.EditAlertUIState
@@ -29,7 +30,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 private const val EDIT_MENU_ITEM = 1
 private const val REMOVE_MENU_ITEM = 2
 
-class TagListFragment : Fragment() {
+class TagListFragment : BaseFragment<TagListViewModel>() {
 
     companion object {
         const val TAG_ADDED_REQUEST_KEY = "TAG_ADDED_REQUEST_KEY"
@@ -39,9 +40,11 @@ class TagListFragment : Fragment() {
     private val adapter by lazy { TagListAdapter(::onTagSelected) }
 
 
-    private val viewModel: TagListViewModel by viewModel()
+    override val viewModel: TagListViewModel by viewModel()
     private lateinit var tagsRecyclerView: RecyclerView
-    private lateinit var toolbar: MaterialToolbar
+    private val toolbar: MaterialToolbar by lazy {
+        (requireActivity() as MainActivity).toolbar
+    }
     private lateinit var fabAddAction: FloatingActionButton
     private var dialog: AlertDialog? = null
 
@@ -60,9 +63,14 @@ class TagListFragment : Fragment() {
         observe()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        toolbar.menu.clear()
+    }
+
     private fun initViews(view: View) {
         with(view) {
-            toolbar = findViewById(R.id.toolbar)
+            toolbar.inflateMenu(R.menu.add_tag_menu)
             tagsRecyclerView = findViewById(R.id.tag_list)
             tagsRecyclerView.adapter = adapter
             tagsRecyclerView.layoutManager =
@@ -80,7 +88,8 @@ class TagListFragment : Fragment() {
         }
     }
 
-    private fun observe() {
+    override fun observe() {
+        super.observe()
         viewModel.tagListLiveData.observe(viewLifecycleOwner) { data ->
             tagsRecyclerView.post {
                 adapter.setData(data)

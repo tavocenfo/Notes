@@ -16,6 +16,7 @@ import com.gquesada.notes.domain.usecases.AddNoteUseCaseOutput
 import com.gquesada.notes.domain.usecases.EditNoteUseCase
 import com.gquesada.notes.domain.usecases.EditNoteUseCaseInput
 import com.gquesada.notes.domain.usecases.EditNoteUseCaseOutput
+import com.gquesada.notes.ui.base.BaseViewModel
 import com.gquesada.notes.ui.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,7 +25,7 @@ import kotlinx.coroutines.withContext
 class AddNoteViewModel(
     private val addNoteUseCase: AddNoteUseCase,
     private val editNoteUseCase: EditNoteUseCase
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _tagAddedLiveData = MutableLiveData<TagModel>()
     val tagAddedLiveData: LiveData<TagModel>
@@ -90,7 +91,9 @@ class AddNoteViewModel(
                 }
 
                 is AddNoteUseCaseOutput.Error -> {
-                    handleAddNoteError(result.cause)
+                    handleErrorException(result.cause) {
+                        handleAddNoteError(result.cause)
+                    }
                 }
             }
         }
@@ -121,7 +124,9 @@ class AddNoteViewModel(
                 }
 
                 is EditNoteUseCaseOutput.Error -> {
-                    handleAddNoteError(result.cause)
+                    handleErrorException(result.cause) {
+                        handleAddNoteError(result.cause)
+                    }
                 }
             }
 
@@ -137,6 +142,7 @@ class AddNoteViewModel(
             is TagNullException -> {
                 _displayErrorMessageLiveData.value = R.string.add_note_empty_tag_error
             }
+
             is NetworkErrorException -> {
                 _displayErrorMessageLiveData.value = R.string.error_updating_note_message
             }

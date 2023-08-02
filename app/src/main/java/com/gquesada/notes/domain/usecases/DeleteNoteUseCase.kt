@@ -12,12 +12,12 @@ class DeleteNoteUseCase(
             repository.deleteNote(note)
             DeleteNoteUseCaseOutput.Success
         } catch (e: Exception) {
-            DeleteNoteUseCaseOutput.Error
+            DeleteNoteUseCaseOutput.Error(e)
         }
 
 }
 
 sealed class DeleteNoteUseCaseOutput {
     object Success : DeleteNoteUseCaseOutput()
-    object Error : DeleteNoteUseCaseOutput()
+    data class Error(val exception: Exception) : DeleteNoteUseCaseOutput()
 }
