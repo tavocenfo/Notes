@@ -1,5 +1,6 @@
 package com.gquesada.notes.ui.notes.viewmodels
 
+import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,7 @@ import com.gquesada.notes.domain.usecases.DeleteNoteUseCase
 import com.gquesada.notes.domain.usecases.DeleteNoteUseCaseOutput
 import com.gquesada.notes.domain.usecases.GetNotesUseCase
 import com.gquesada.notes.ui.base.BaseViewModel
+import com.gquesada.notes.ui.main.viewmodels.NavigationScreen
 import com.gquesada.notes.ui.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -29,6 +31,9 @@ class NoteListViewModel(
     private val _displayErrorMessage = SingleLiveEvent<Int>()
     val displayErrorMessage: LiveData<Int>
         get() = _displayErrorMessage
+    private val _navigateToNote = SingleLiveEvent<NavigationScreen>()
+    val navigateToNote: LiveData<NavigationScreen>
+        get() = _navigateToNote
 
     //Referencia para entender que es un CoroutineScope y un CoroutineContext
     // actualmente no se esta utilizando
@@ -43,7 +48,7 @@ class NoteListViewModel(
 //    }
 
 
-    fun onViewReady() {
+    fun onViewReady(arguments: Bundle?) {
         // aca puede usar el custom scope
 
         // scope es necesario para poder lanzar una coroutine
@@ -53,6 +58,7 @@ class NoteListViewModel(
                 .catch { handleErrorException(it) }
                 .collect { notes ->
                     _noteListLiveData.value = notes
+                    handleNotification(arguments)
                 }
         }
     }
@@ -70,6 +76,14 @@ class NoteListViewModel(
                 }
             }
 
+        }
+    }
+
+    private fun handleNotification(arguments: Bundle?) {
+        val noteId = arguments?.getString("note_id")?.toLongOrNull() ?: return
+        val noteModel = _noteListLiveData.value?.find { note -> note.id == noteId }
+        noteModel?.let { note ->
+            _navigateToNote.value = NavigationScreen.EditNote(note)
         }
     }
 }

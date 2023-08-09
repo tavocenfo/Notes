@@ -1,5 +1,6 @@
 package com.gquesada.notes.ui.login.viewmodels
 
+import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -49,19 +50,19 @@ class LoginViewModel(
         _isSignInActionEnabled.value = email.isNotEmpty() && password.isNotEmpty()
     }
 
-    fun onLogin() {
+    fun onLogin(arguments: Bundle?) {
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
                 loginUseCase.execute(LoginUseCaseInput(email, password))
             }
-            handleLoginResult(result)
+            handleLoginResult(result, arguments)
         }
     }
 
-    private fun handleLoginResult(result: LoginUseCaseOutput) {
+    private fun handleLoginResult(result: LoginUseCaseOutput, arguments: Bundle?) {
         when (result) {
             is LoginUseCaseOutput.Success -> _navigateToInitialScreenEvent.value =
-                NavigationScreen.NoteList
+                NavigationScreen.NoteList(arguments)
 
             is LoginUseCaseOutput.Error -> handleLoginError(result)
         }

@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
     id 'com.google.devtools.ksp'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -10,7 +11,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.gquesada.colors.xml"
+        applicationId "com.gquesada.notes"
         minSdk 28
         targetSdk 33
         versionCode 1
@@ -53,6 +54,9 @@ dependencies {
 
     // Dependencia para usar Koin
     implementation "io.insert-koin:koin-android:3.4.0"
+
+    // Notificaciones
+    implementation 'com.google.firebase:firebase-messaging:23.2.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

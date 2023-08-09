@@ -56,7 +56,7 @@ class NoteListFragment : BaseFragment<NoteListViewModel>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.onViewReady()
+        viewModel.onViewReady(arguments)
     }
 
     private fun initViews(view: View) {
@@ -92,6 +92,9 @@ class NoteListFragment : BaseFragment<NoteListViewModel>() {
         }
         viewModel.displayErrorMessage.observe(viewLifecycleOwner) { resId ->
             Toast.makeText(requireContext(), getString(resId), Toast.LENGTH_SHORT).show()
+        }
+        viewModel.navigateToNote.observe(viewLifecycleOwner) { screen ->
+            mainViewModel.navigateTo(screen)
         }
     }
 

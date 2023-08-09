@@ -9,6 +9,7 @@ import com.gquesada.notes.data.datasources.DatabaseUserDataSource
 import com.gquesada.notes.data.datasources.RemoteNoteDataSource
 import com.gquesada.notes.data.datasources.RemoteTagDataSource
 import com.gquesada.notes.data.datasources.RemoteUserDataSource
+import com.gquesada.notes.data.datasources.SharedPreferencesDataSource
 import com.gquesada.notes.data.network.NoteApiService
 import com.gquesada.notes.data.network.TagApiService
 import com.gquesada.notes.data.network.UserApiService
@@ -36,6 +37,7 @@ import com.gquesada.notes.ui.notes.viewmodels.NoteListViewModel
 import com.gquesada.notes.ui.tag.viewmodels.TagListViewModel
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidApplication
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -56,7 +58,7 @@ val module = module {
     single<Retrofit>(named("AuthRetrofit")) {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .client(OkHttpClient.Builder().addInterceptor(AuthInterceptor(get())).build())
+            .client(OkHttpClient.Builder().addInterceptor(AuthInterceptor(get(), get())).build())
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
     }
@@ -87,6 +89,7 @@ val module = module {
     single { RemoteTagDataSource(get()) }
     single { RemoteNoteDataSource(get()) }
     single { RemoteUserDataSource(get()) }
+    single { SharedPreferencesDataSource(androidContext()) }
 
     // Dependencias Repositorios
     single<NoteRepository> { NoteRepositoryImpl(get(), get(), get()) }

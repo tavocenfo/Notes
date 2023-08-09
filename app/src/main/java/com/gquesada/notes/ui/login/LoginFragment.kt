@@ -62,7 +62,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun setLoginListener() {
-        btnSignIn.setOnClickListener { viewModel.onLogin() }
+        btnSignIn.setOnClickListener { viewModel.onLogin(arguments) }
     }
 
     private fun observe() {

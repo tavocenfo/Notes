@@ -1,7 +1,7 @@
 package com.gquesada.notes.ui.main.viewmodels
 
+import android.os.Bundle
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
@@ -20,15 +20,15 @@ class MainViewModel(
     val navigationEvent: LiveData<NavigationScreen>
         get() = _navigationEvent
 
-    val shouldDrawerBeEnabled = _navigationEvent.map { it != NavigationScreen.Login }
+    val shouldDrawerBeEnabled = _navigationEvent.map { it !is NavigationScreen.Login }
 
-    fun onAppOpened() {
+    fun onAppOpened(bundle: Bundle?) {
         //change this with user session
         // if user has a session, open NoteList
         viewModelScope.launch {
             useCase.execute()?.let {
-                navigateTo(NavigationScreen.NoteList)
-            } ?: navigateTo(NavigationScreen.Login)
+                navigateTo(NavigationScreen.NoteList(bundle))
+            } ?: navigateTo(NavigationScreen.Login(bundle))
         }
         // if not, open Login
     }
@@ -41,17 +41,17 @@ class MainViewModel(
         // implement logout event
         viewModelScope.launch {
             logout.execute()
-            navigateTo(NavigationScreen.Login)
+            navigateTo(NavigationScreen.Login())
         }
 
     }
 }
 
-sealed class NavigationScreen(val isInitialScreen: Boolean) {
+sealed class NavigationScreen(val isInitialScreen: Boolean, val arguments: Bundle? = null) {
 
-    object Login : NavigationScreen(true)
+    data class Login(private val bundle: Bundle? = null) : NavigationScreen(true, bundle)
 
-    object NoteList : NavigationScreen(true)
+    data class NoteList(private val bundle: Bundle? = null) : NavigationScreen(true, bundle)
     object AddNotes : NavigationScreen(false)
 
     object TagList : NavigationScreen(false)
