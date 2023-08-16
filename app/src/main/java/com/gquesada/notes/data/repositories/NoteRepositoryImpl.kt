@@ -29,11 +29,14 @@ class NoteRepositoryImpl(
 
     override fun getAllNotes(): Flow<List<NoteModel>> =
         flow {
+            // obtiene la data del server
             val remoteNotes = remoteNoteDataSource.getNotes()
             // LocalData es un Pair en el cual el localData.first es la lista de notas y localData.second es la lista de tags
             val localData = mapRemoteData(remoteNotes)
+            // guarda la data localmente
             tagDataSource.insert(localData.second.toList())
             noteDataSource.addNotes(localData.first)
+            // emite los cambios locales
             emitAll(noteDataSource.getAllNotes())
         }
             .catch {

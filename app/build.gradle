@@ -58,7 +58,12 @@ dependencies {
     // Notificaciones
     implementation 'com.google.firebase:firebase-messaging:23.2.0'
 
+    // Junit nos permite ejecutar pruebas sobre la JVM
     testImplementation 'junit:junit:4.13.2'
+    // Nos permite testear coroutines
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
+    // Nos permite crear mocks de clases kotlin
+    testImplementation "io.mockk:mockk:1.13.7"
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }

@@ -48,5 +48,5 @@ data class AddNoteUseCaseInput(
 
 sealed class AddNoteUseCaseOutput {
     object Success : AddNoteUseCaseOutput()
-    class Error(val cause: Exception) : AddNoteUseCaseOutput()
+    data class Error(val cause: Exception) : AddNoteUseCaseOutput()
 }
